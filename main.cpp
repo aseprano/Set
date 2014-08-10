@@ -9,9 +9,17 @@
 #include <iostream>
 #include "Set.hpp"
 
+template<class K>
+class SetCompare {
+public:
+	bool operator()(const K& v1, const K& v2) const noexcept {
+		return v1 > v2;
+	}
+};
+
 int main(int argc, const char * argv[]) {
 	// insert code here...
-	Set s1{1,2,3,5}, s2{1,2,4,5}, s3 = s1.intersection(s2);
+	Set<int,SetCompare<int>> s1{1,2,3,5}, s2{1,2,4,5}, s3 = s1.intersection(s2);
 	
 	if (s3.empty()) {
 		std::cout << "s3 is empty" << std::endl;
