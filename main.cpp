@@ -19,16 +19,15 @@ public:
 
 int main(int argc, const char * argv[]) {
 	// insert code here...
-	Set<int,SetCompare<int>> s1{1,2,3,5}, s2{1,2,4,5}, s3 = s1.intersection(s2);
+	Set<int> s1{1,2,3,5}, s2{1,2,4,5}, s3 = s1+s2;
 	
-	if (s3.empty()) {
-		std::cout << "s3 is empty" << std::endl;
+	auto it = s1.find(90);
+	
+	if (it != s1.end()) {
+		std::cout << "Found value: " << *it << std::endl;
 	}
 	else {
-		std::cout << "s3: " << std::endl;
-		for (const auto& v : s3) {
-			std::cout << v << std::endl;
-		}
+		std::cout << "Value not found" << std::endl;
 	}
 	
 	return 0;

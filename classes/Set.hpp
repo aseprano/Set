@@ -14,25 +14,25 @@
 #ifndef _SET_HPP
 #define _SET_HPP
 
-template<class _Key, class _Compare=std::less<_Key>, class _Allocator = std::allocator<_Key> >
+template<class _T, class _Compare=std::less<_T>, class _Allocator = std::allocator<_T> >
 class Set {
 public:
-	typedef _Key				key_type;
-	typedef _Compare		key_compare;
+	typedef _T				  value_type;
+	typedef _Compare		value_compare;
 	typedef _Allocator	allocator_type;
 	
 private:
-	typedef Set<key_type,key_compare,allocator_type> _SET;
+	typedef Set<value_type,value_compare,allocator_type> _SET;
 	
 public:
-	typedef typename std::set<key_type,key_compare,allocator_type>::iterator				iterator;
-	typedef typename std::set<key_type,key_compare,allocator_type>::const_iterator	const_iterator;
+	typedef typename std::set<value_type,value_compare,allocator_type>::iterator				iterator;
+	typedef typename std::set<value_type,value_compare,allocator_type>::const_iterator	const_iterator;
 	
 	// Empty set
 	Set() {};
 	
 	// Set with initializer list
-	Set(std::initializer_list<key_type> l) {
+	Set(std::initializer_list<value_type> l) {
 		_set.insert(l);
 	}
 	
@@ -66,11 +66,11 @@ public:
 		return !(*this == s);
 	};
 	
-	_SET operator+(const key_type& value) const noexcept {
+	_SET operator+(const value_type& value) const noexcept {
 		return _SET{*this}+_SET{value};
 	}
 	
-	_SET operator+(key_type&& value) const noexcept {
+	_SET operator+(value_type&& value) const noexcept {
 		return _SET{*this}+_SET{std::move(value)};
 	}
 	
@@ -86,12 +86,12 @@ public:
 		return ret;
 	}
 	
-	_SET& operator+=(const key_type& value) noexcept {
+	_SET& operator+=(const value_type& value) noexcept {
 		insert(value);
 		return *this;
 	}
 	
-	_SET& operator+=(key_type&& value) noexcept {
+	_SET& operator+=(value_type&& value) noexcept {
 		insert(std::move(value));
 		return *this;
 	}
@@ -106,7 +106,7 @@ public:
 		return *this;
 	}
 	
-	_SET operator-(const key_type& value) const noexcept {
+	_SET operator-(const value_type& value) const noexcept {
 		_SET ret{*this};
 		ret.erase(value);
 		return ret;
@@ -120,7 +120,7 @@ public:
 		return ret;
 	}
 	
-	_SET& operator-=(const key_type& value) noexcept {
+	_SET& operator-=(const value_type& value) noexcept {
 		_set.erase(value);
 		return *this;
 	}
@@ -171,7 +171,7 @@ public:
 		_set.clear();
 	}
 	
-	bool contains(const key_type& value) const noexcept {
+	bool contains(const value_type& value) const noexcept {
 		return contains(_SET{value});
 	}
 	
@@ -183,11 +183,11 @@ public:
 		return true;
 	}
 	
-	std::pair<iterator,bool> insert(const key_type& value) noexcept {
+	std::pair<iterator,bool> insert(const value_type& value) noexcept {
 		return _set.insert(value);
 	}
 	
-	std::pair<iterator,bool> insert(key_type&& value) noexcept {
+	std::pair<iterator,bool> insert(value_type&& value) noexcept {
 		return _set.insert(std::move(value));
 	}
 	
@@ -214,7 +214,7 @@ public:
 		return _set.erase(position);
 	}
 	
-	size_t erase(const key_type& value) {
+	size_t erase(const value_type& value) {
 		return _set.erase(value);
 	}
 	
@@ -232,8 +232,16 @@ public:
 		return ret;
 	}
 	
+	iterator find(const value_type& value) noexcept {
+		return _set.find(value);
+	}
+	
+	const_iterator find(const value_type& value) const noexcept {
+		return _set.find(value);
+	}
+	
 private:
-	std::set<key_type,key_compare,allocator_type> _set;
+	std::set<value_type,value_compare,allocator_type> _set;
 };
 
 #endif /* defined(_SET_HPP) */
