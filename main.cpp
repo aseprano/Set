@@ -7,28 +7,46 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include "Set.hpp"
 
-template<class K>
-class SetCompare {
-public:
-	bool operator()(const K& v1, const K& v2) const noexcept {
-		return v1 > v2;
+using std::string;
+
+template<class T>
+std::string toString(const T& t) {
+	std::stringstream ss;
+	ss << t;
+	return ss.str();
+}
+
+template<class T>
+std::string toString(const Set<T>& s) {
+	std::stringstream ss;
+	bool fFirstItem{true};
+	
+	ss << "{";
+	
+	for (const auto& value : s) {
+		if (!fFirstItem) {
+			ss << ",";
+		}
+		else {
+			fFirstItem = false;
+		}
+		
+		ss << toString(value);
 	}
-};
+	
+	return ss.str() + "}";
+}
 
 int main(int argc, const char * argv[]) {
-	// insert code here...
-	Set<int> s1{1,2,3,5}, s2{1,2,4,5}, s3 = s1+s2;
+	Set<int> s1{1,2,3}, s2{1,2,4};
+	auto s3 = s1*s2;
 	
-	auto it = s1.find(90);
-	
-	if (it != s1.end()) {
-		std::cout << "Found value: " << *it << std::endl;
-	}
-	else {
-		std::cout << "Value not found" << std::endl;
-	}
+	std::cout << "s1: " << toString(s1) << std::endl;
+	std::cout << "s2: " << toString(s2) << std::endl;
+	std::cout << "s3: " << toString(s3) << std::endl;
 	
 	return 0;
 }

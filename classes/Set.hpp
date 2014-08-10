@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Antonio Seprano. All rights reserved.
 //
 
-#include <set>
+#include <vector>
 #include <functional>
 #include <utility>
 #include <algorithm>
@@ -14,31 +14,30 @@
 #ifndef _SET_HPP
 #define _SET_HPP
 
-template<class _T, class _Compare=std::less<_T>, class _Allocator = std::allocator<_T> >
+template<class _T, class _Allocator = std::allocator<_T> >
 class Set {
 public:
 	typedef _T				  value_type;
-	typedef _Compare		value_compare;
 	typedef _Allocator	allocator_type;
 	
 private:
-	typedef Set<value_type,value_compare,allocator_type> _SET;
+	typedef Set<value_type,allocator_type> _SET;
 	
 public:
-	typedef typename std::set<value_type,value_compare,allocator_type>::iterator				iterator;
-	typedef typename std::set<value_type,value_compare,allocator_type>::const_iterator	const_iterator;
+	typedef typename std::vector<value_type,allocator_type>::iterator				iterator;
+	typedef typename std::vector<value_type,allocator_type>::const_iterator	const_iterator;
 	
 	// Empty set
 	Set() {};
 	
 	// Set with initializer list
 	Set(std::initializer_list<value_type> l) {
-		_set.insert(l);
+		_set.insert(_set.begin(), l);
 	}
 	
 	// Copy constructor
 	Set(const _SET& s) {
-		_set.insert(s._set.begin(), s._set.end());
+		_set = s._set;
 	}
 	
 	// Move constructor
@@ -59,12 +58,34 @@ public:
 	}
 	
 	bool operator==(const _SET& s) const noexcept {
-		return this->size() == s.size() && this->contains(s);
+		return this->contains(s, false) && s.contains(*this, false);
 	}
 	
 	bool operator!=(const _SET& s) const noexcept {
 		return !(*this == s);
 	};
+	
+	bool operator<(const _SET& s) const noexcept {
+		if (size() != s.size()) {
+			return size() < s.size();
+		}
+		
+		auto it1=begin(), it2=s.begin();
+		
+		while (it1 != end() && it2 != s.end()) {
+			if (*it1 < *it2) {
+				return true;
+			}
+			else if (*it1 > *it2) {
+				return false;
+			}
+			
+			it1++;
+			it2++;
+		};
+		
+		return false;
+	}
 	
 	_SET operator+(const value_type& value) const noexcept {
 		return _SET{*this}+_SET{value};
@@ -76,13 +97,21 @@ public:
 	
 	_SET operator+(const _SET& s) const noexcept {
 		_SET ret{*this};
-		ret.insert(s);
+		
+		for (const auto& value : s) {
+			ret.insert(value);
+		}
+		
 		return ret;
 	}
 	
 	_SET operator+(_SET&& s) const noexcept {
 		_SET ret{*this};
-		ret.insert(std::move(s));
+		
+		for (auto& value : s) {
+			ret.insert(std::move(s));
+		}
+		
 		return ret;
 	}
 	
@@ -97,12 +126,18 @@ public:
 	}
 	
 	_SET& operator+=(const _SET& s) noexcept {
-		insert(s);
+		for (const auto& value : s) {
+			insert(value);
+		}
+		
 		return *this;
 	}
 	
 	_SET& operator+=(_SET&& s) noexcept {
-		insert(std::move(s));
+		for (auto& value : s) {
+			insert(std::move(value));
+		}
+		
 		return *this;
 	}
 	
@@ -132,6 +167,20 @@ public:
 		return *this;
 	}
 	
+	Set<_SET> operator*(const _SET& other) noexcept {
+		Set<_SET> ret;
+		
+		if (!this->empty() && !other.empty()) {
+			for (const auto& v1 : _set) {
+				for (const auto& v2 : other) {
+					ret.insert(_SET{v1,v2});
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
 	_SET intersection(const _SET& s) noexcept {
 		_SET s1, s2;
 		
@@ -151,13 +200,21 @@ public:
 		return s1;
 	}
 	
-	iterator begin() const noexcept {
+	iterator begin() noexcept {
 		return _set.begin();
 	};
 	
-	iterator end() const noexcept {
+	const_iterator begin() const noexcept {
+		return _set.begin();
+	}
+	
+	iterator end() noexcept {
 		return _set.end();
 	};
+	
+	const_iterator end() const noexcept {
+		return _set.end();
+	}
 	
 	size_t size() const noexcept {
 		return _set.size();
@@ -175,32 +232,29 @@ public:
 		return contains(_SET{value});
 	}
 	
-	bool contains(const _SET& s) const noexcept {
+	bool contains(const _SET& s, bool strict = false) const noexcept {
 		for (const auto& value : s) {
-			if (_set.find(value) == _set.end()) return false;
+			bool found{false};
+			
+			for (const auto& v : _set) {
+				if (v == value) {
+					found = true;
+					break;
+				}
+			}
+			
+			if (!found) return false;
 		}
 		
-		return true;
+		return strict ? s.size() != size() : true;
 	}
 	
-	std::pair<iterator,bool> insert(const value_type& value) noexcept {
-		return _set.insert(value);
+	void insert(const value_type& value) noexcept {
+		_set.insert(value);
 	}
 	
-	std::pair<iterator,bool> insert(value_type&& value) noexcept {
-		return _set.insert(std::move(value));
-	}
-	
-	void insert(const _SET& s) noexcept {
-		for (const auto& value : s) {
-			_set.insert(value);
-		}
-	}
-	
-	void insert(_SET&& s) noexcept {
-		for (auto& value : s) {
-			_set.insert(std::move(value));
-		}
+	void insert(value_type&& value) noexcept {
+		_set.push_back(std::move(value));
 	}
 	
 	template<class InputIterator>
@@ -239,9 +293,9 @@ public:
 	const_iterator find(const value_type& value) const noexcept {
 		return _set.find(value);
 	}
-	
+		
 private:
-	std::set<value_type,value_compare,allocator_type> _set;
+	std::vector<value_type,allocator_type> _set;
 };
 
 #endif /* defined(_SET_HPP) */
