@@ -41,12 +41,9 @@ std::string toString(const Set<T>& s) {
 }
 
 int main(int argc, const char * argv[]) {
-	Set<int> s1{1,2,3}, s2{1,2,4};
-	auto s3 = s1*s2;
-	
-	std::cout << "s1: " << toString(s1) << std::endl;
-	std::cout << "s2: " << toString(s2) << std::endl;
-	std::cout << "s3: " << toString(s3) << std::endl;
+	Set<int> s1{1,2,3}, s2{1,2,4}, s3 = (s1-s2)+(s2-s1);
+	auto n = (s1+s2).count(1);
+	std::cout << n << std::endl;
 	
 	return 0;
 }

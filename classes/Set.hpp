@@ -109,7 +109,7 @@ public:
 		_SET ret{*this};
 		
 		for (auto& value : s) {
-			ret.insert(std::move(s));
+			ret.insert(std::move(value));
 		}
 		
 		return ret;
@@ -202,7 +202,7 @@ public:
 	
 	iterator begin() noexcept {
 		return _set.begin();
-	};
+	}
 	
 	const_iterator begin() const noexcept {
 		return _set.begin();
@@ -218,11 +218,11 @@ public:
 	
 	size_t size() const noexcept {
 		return _set.size();
-	};
+	}
 	
 	bool empty() const noexcept {
 		return _set.empty();
-	};
+	}
 	
 	void clear() noexcept {
 		_set.clear();
@@ -243,14 +243,16 @@ public:
 				}
 			}
 			
-			if (!found) return false;
+			if (!found) {
+				return false;
+			}
 		}
 		
-		return strict ? s.size() != size() : true;
+		return strict ? (s.size() != size()) : true;
 	}
 	
 	void insert(const value_type& value) noexcept {
-		_set.insert(value);
+		_set.push_back(value);
 	}
 	
 	void insert(value_type&& value) noexcept {
@@ -269,7 +271,16 @@ public:
 	}
 	
 	size_t erase(const value_type& value) {
-		return _set.erase(value);
+		size_t ret{};
+		
+		for (auto it = _set.begin(); it != _set.end(); it++) {
+			if (*it == value) {
+				_set.erase(it);
+				++ret;
+			}
+		}
+		
+		return ret;
 	}
 	
 	iterator erase(const_iterator first, const_iterator last) {
@@ -287,13 +298,29 @@ public:
 	}
 	
 	iterator find(const value_type& value) noexcept {
-		return _set.find(value);
+		for (auto it = _set.begin(); it != _set.end(); it++) {
+			if (*it == value) return it;
+		}
+		
+		return _set.end();
 	}
 	
 	const_iterator find(const value_type& value) const noexcept {
-		return _set.find(value);
+		return (const_iterator)find(value);
 	}
+	
+	size_t count(const value_type& value) const noexcept {
+		size_t ret{};
 		
+		for (const auto& v : _set) {
+			if (v == value) {
+				ret++;
+			}
+		}
+		
+		return ret;
+	}
+	
 private:
 	std::vector<value_type,allocator_type> _set;
 };
