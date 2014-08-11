@@ -14,14 +14,15 @@
 #ifndef _SET_HPP
 #define _SET_HPP
 
-template<class _T, class _Allocator = std::allocator<_T> >
+template<class _T, class _Compare = std::less<_T>, class _Allocator = std::allocator<_T>>
 class Set {
 public:
 	typedef _T				  value_type;
 	typedef _Allocator	allocator_type;
+	typedef _Compare    value_compare;
 	
 private:
-	typedef Set<value_type,allocator_type> _SET;
+	typedef Set<value_type,value_compare,allocator_type> _SET;
 	
 public:
 	typedef typename std::vector<value_type,allocator_type>::iterator				iterator;
@@ -155,10 +156,10 @@ public:
 	// Insert new value
 	// unique = true => values must be unique (no duplicate values allowed)
 	_SET& insert(const value_type& value, bool unique = false) noexcept {
-		if (!unique || find(value) == _set.end()) {
+		if (!unique || this->find(value) == _set.end()) {
 			auto it = begin();
 			
-			while (it != end() && *it < value) {
+			while (it != end() && value_compare()(*it, value)) {
 				it++;
 			}
 			
@@ -172,7 +173,7 @@ public:
 		if (!unique || find(value) == _set.end()) {
 			auto it = begin();
 			
-			while (it != end() && *it < value) {
+			while (it != end() && value_compare()(*it, value)) {
 				it++;
 			}
 			
@@ -281,7 +282,7 @@ public:
 	}
 	
 	
-	_SET intersection(const _SET& s) noexcept {
+	_SET intersectionWith(const _SET& s) noexcept {
 		_SET s1, s2;
 		
 		if (s.size() <= size()) {
