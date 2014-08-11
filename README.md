@@ -178,7 +178,7 @@ Set<MyTypeWrapper> A{MyTypeWrapper(...), MyTypeWrapper(...), ...};
 
 ```
 
-- Set of pointers will not sort/store values properly, because comparing pointers will sort items by memory address and not by value. You have to create your own object to compare pointers.
+- Set of pointers will not sort/store values properly, because comparing pointers will sort items by memory address and not by value. You will create your own object to compare pointers:
 
 ```
 template<class T>
