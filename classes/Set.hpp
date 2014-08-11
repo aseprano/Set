@@ -57,6 +57,58 @@ public:
 		return *this;
 	}
 	
+	iterator begin() noexcept {
+		return _set.begin();
+	}
+	
+	const_iterator begin() const noexcept {
+		return _set.begin();
+	}
+	
+	iterator end() noexcept {
+		return _set.end();
+	};
+	
+	const_iterator end() const noexcept {
+		return _set.end();
+	}
+	
+	size_t size() const noexcept {
+		return _set.size();
+	}
+	
+	bool empty() const noexcept {
+		return _set.empty();
+	}
+	
+	void clear() noexcept {
+		_set.clear();
+	}
+	
+	iterator find(const value_type& value) noexcept {
+		for (auto it = _set.begin(); it != _set.end(); it++) {
+			if (*it == value) return it;
+		}
+		
+		return _set.end();
+	}
+	
+	const_iterator find(const value_type& value) const noexcept {
+		return (const_iterator)find(value);
+	}
+	
+	size_t count(const value_type& value) const noexcept {
+		size_t ret{};
+		
+		for (const auto& v : _set) {
+			if (v == value) {
+				ret++;
+			}
+		}
+		
+		return ret;
+	}
+	
 	bool operator==(const _SET& s) const noexcept {
 		return this->contains(s, false) && s.contains(*this, false);
 	}
@@ -65,6 +117,7 @@ public:
 		return !(*this == s);
 	};
 	
+	/*
 	bool operator<(const _SET& s) const noexcept {
 		if (size() != s.size()) {
 			return size() < s.size();
@@ -86,6 +139,23 @@ public:
 		
 		return false;
 	}
+	*/
+	
+	
+	// Insert new value
+	// unique = true => values must be unique (no duplicate values allowed)
+	void insert(const value_type& value, bool unique = false) noexcept {
+		if (!unique || find(value) == _set.end()) {
+			_set.push_back(value);
+		}
+	}
+	
+	void insert(value_type&& value, bool unique = false) noexcept {
+		if (!unique || find(value) == _set.end()) {
+			_set.push_back(std::move(value));
+		}
+	}
+	
 	
 	_SET operator+(const value_type& value) const noexcept {
 		return _SET{*this}+_SET{value};
@@ -115,6 +185,7 @@ public:
 		return ret;
 	}
 	
+	
 	_SET& operator+=(const value_type& value) noexcept {
 		insert(value);
 		return *this;
@@ -140,6 +211,7 @@ public:
 		
 		return *this;
 	}
+	
 	
 	_SET operator-(const value_type& value) const noexcept {
 		_SET ret{*this};
@@ -167,6 +239,7 @@ public:
 		return *this;
 	}
 	
+	
 	Set<_SET> operator*(const _SET& other) noexcept {
 		Set<_SET> ret;
 		
@@ -180,6 +253,7 @@ public:
 		
 		return ret;
 	}
+	
 	
 	_SET intersection(const _SET& s) noexcept {
 		_SET s1, s2;
@@ -198,34 +272,6 @@ public:
 		}
 		
 		return s1;
-	}
-	
-	iterator begin() noexcept {
-		return _set.begin();
-	}
-	
-	const_iterator begin() const noexcept {
-		return _set.begin();
-	}
-	
-	iterator end() noexcept {
-		return _set.end();
-	};
-	
-	const_iterator end() const noexcept {
-		return _set.end();
-	}
-	
-	size_t size() const noexcept {
-		return _set.size();
-	}
-	
-	bool empty() const noexcept {
-		return _set.empty();
-	}
-	
-	void clear() noexcept {
-		_set.clear();
 	}
 	
 	bool contains(const value_type& value) const noexcept {
@@ -251,14 +297,6 @@ public:
 		return strict ? (s.size() != size()) : true;
 	}
 	
-	void insert(const value_type& value) noexcept {
-		_set.push_back(value);
-	}
-	
-	void insert(value_type&& value) noexcept {
-		_set.push_back(std::move(value));
-	}
-	
 	template<class InputIterator>
 	void insert(InputIterator first, InputIterator last) {
 		for (auto it = first; it != last; it++) {
@@ -270,8 +308,23 @@ public:
 		return _set.erase(position);
 	}
 	
-	size_t erase(const value_type& value) {
+	iterator erase(const_iterator first, const_iterator last) {
+		return _set.erase(first,last);
+	}
+	
+	size_t erase(const value_type& value, bool all = true) {
 		size_t ret{};
+		
+		if (!all) {
+			auto it = find(value);
+			
+			if (it != end()) {
+				erase(it);
+				ret++;
+			}
+			
+			return ret;
+		}
 		
 		for (auto it = _set.begin(); it != _set.end(); it++) {
 			if (*it == value) {
@@ -283,42 +336,21 @@ public:
 		return ret;
 	}
 	
-	iterator erase(const_iterator first, const_iterator last) {
-		return _set.erase(first,last);
-	}
-	
-	size_t erase(const _SET& s) noexcept {
-		size_t ret{};
-		
-		for (const auto& value : s) {
-			ret += erase(value);
-		}
-		
-		return ret;
-	}
-	
-	iterator find(const value_type& value) noexcept {
-		for (auto it = _set.begin(); it != _set.end(); it++) {
-			if (*it == value) return it;
-		}
-		
-		return _set.end();
-	}
-	
-	const_iterator find(const value_type& value) const noexcept {
-		return (const_iterator)find(value);
-	}
-	
-	size_t count(const value_type& value) const noexcept {
-		size_t ret{};
-		
-		for (const auto& v : _set) {
-			if (v == value) {
-				ret++;
+	_SET& unique() noexcept {
+		for (auto i = begin(); i != end(); i++) {
+			auto j = i+1;
+			
+			while (j != end()) {
+				if (*i == *j) {
+					_set.erase(j);
+				}
+				else {
+					j++;
+				}
 			}
 		}
 		
-		return ret;
+		return *this;
 	}
 	
 private:
