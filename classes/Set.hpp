@@ -100,7 +100,9 @@ public:
 	
 	iterator find(const value_type& value) noexcept {
 		for (auto it = _set.begin(); it != _set.end(); it++) {
-			if (*it == value) return it;
+			if (!value_compare()(*it,value) && !value_compare()(value,*it)) {
+				return it;
+			}
 		}
 		
 		return _set.end();
@@ -114,7 +116,7 @@ public:
 		size_t ret{};
 		
 		for (const auto& v : _set) {
-			if (v == value) {
+			if (!value_compare()(v,value) && !value_compare()(value,v)) {
 				ret++;
 			}
 		}
@@ -310,7 +312,7 @@ public:
 			bool found{false};
 			
 			for (const auto& v : _set) {
-				if (v == value) {
+				if (!value_compare()(value, v) && !value_compare()(v, value)) {
 					found = true;
 					break;
 				}
@@ -368,7 +370,7 @@ public:
 			auto j = i+1;
 			
 			while (j != end()) {
-				if (*i == *j) {
+				if (!value_compare()(*i, *j) && !value_compare()(*j, *j)) {
 					_set.erase(j);
 				}
 				else {
