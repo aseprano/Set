@@ -43,6 +43,19 @@ A.erase(4);         // The short form for A.erase(4, false)
 A.erase(A.begin(), A.end()); // Removes all the elements, same as A.clear()
 ```
 
+Working with stl functions:
+
+```
+Set<int> B{1,2,2,3,4,4,5};
+
+// Removing all values between 2 and 4
+auto it = std::remove_if(B.begin(), B.end(), [](int val){return val >= 2 && val <= 4;});
+B.erase(it, B.end());
+
+// B = {1,5}
+
+```
+
 ### Union of sets
 Set can be joined each other using the '+' operator, without modifying the original ones. They can be joined on the fly or in sub-expressions, allowing you to join Set-to-Set and Set-to-value:
 
@@ -58,7 +71,7 @@ You can also add an entire set, or just one value, to a Set using the '+=' opera
 ```
 Set<int> A{1,2,3}, B{3,4,5};
 A += B; // A = {1,2,3,3,4,5}, B won't change
-A += 9; // A = {1,2,3,3,4,5,9}
+A += 9; // A = {1,2,3,3,4,5,9}, 9 won't change
 ```
 
 ### Difference / Relative complement
