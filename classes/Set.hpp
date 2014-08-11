@@ -144,16 +144,20 @@ public:
 	
 	// Insert new value
 	// unique = true => values must be unique (no duplicate values allowed)
-	void insert(const value_type& value, bool unique = false) noexcept {
+	_SET& insert(const value_type& value, bool unique = false) noexcept {
 		if (!unique || find(value) == _set.end()) {
 			_set.push_back(value);
 		}
+		
+		return *this;
 	}
 	
-	void insert(value_type&& value, bool unique = false) noexcept {
+	_SET& insert(value_type&& value, bool unique = false) noexcept {
 		if (!unique || find(value) == _set.end()) {
 			_set.push_back(std::move(value));
 		}
+		
+		return *this;
 	}
 	
 	
@@ -312,7 +316,7 @@ public:
 		return _set.erase(first,last);
 	}
 	
-	size_t erase(const value_type& value, bool all = true) {
+	size_t erase(const value_type& value, bool all = false) {
 		size_t ret{};
 		
 		if (!all) {
