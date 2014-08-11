@@ -42,7 +42,13 @@ A.size();  // Count of items in A (NOT unique): A={1,1,2,3}, A.size() = 4
 A.empty(); // Return true if A.count() == 0, false otherwise
 A.clear(); // Remove ALL items from A
 
-// Unique
-A.unique(); // Removes all but the first element from the Set. A = {1,2,1,3,3,4}, A.unique() => A = {1,2,3,4}
+// Unique, removes all but the first element from the Set
+Set<int> A{1,2,1,3,4,3};     // A = {1,1,2,3,3,4}
+A.unique();                  // A = {1,2,3,4}
+Set<int> B{3,4,5};
+Set<int> C = (A+B).unique(); // C = {1,2,3,4,5}
+
+// Intersection
+Set<int> A{1,2,3}, B{2,3,4}, C = A.intersectionWith(B); // C = {2,3}
 
 ```
