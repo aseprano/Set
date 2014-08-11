@@ -116,7 +116,7 @@ auto P = A*B; // P is Set<Set<int>>; P = {{1,2},{1,3},{2,2},{2,3},{2,3},{3,3}}
 
 ### Size and cleanup of a Set
 You can know the size of a Set, that is the number of total elements in it. The size is greather-or-equal to 0.
-Because of a there is the concept of "empty set" or "zero set", Set adds the <strong>empty()</strong> method, which just checks if the size is zero.
+Because of there is the concept of "empty set" or "zero set", Set adds the <strong>empty()</strong> method, which just checks if the size is zero.
 
 ```
 Set<int> A{1,1,2,2,3,4};
