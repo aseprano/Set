@@ -42,7 +42,63 @@ A.size();  // Count of items in A (NOT unique): A={1,1,2,3}, A.size() = 4
 A.empty(); // Return true if A.count() == 0, false otherwise
 A.clear(); // Remove ALL items from A
 
-// Unique
-A.unique(); // Removes all but the first element from the Set. A = {1,2,1,3,3,4}, A.unique() => A = {1,2,3,4}
+// Unique, removes all but the first element from the Set
+Set<int> A{1,2,1,3,4,3};     // A = {1,1,2,3,3,4}
+A.unique();                  // A = {1,2,3,4}
+Set<int> B{3,4,5};
+Set<int> C = (A+B).unique(); // C = {1,2,3,4,5}
+
+// Intersection
+Set<int> A{1,2,3}, B{2,3,4}, C = A.intersectionWith(B); // C = {2,3}
 
 ```
+
+### Not allowed
+
+- You cannot have Set containing different types, they are for uniform.<br />
+So you cannot combine Set&lt;int&gt; with Set&lt;float&gt; or Set&lt;string&gt; or Set&lt;Set&lt;...&gt;&gt;, but you can write your own TypeWrapper to use your custom Set:
+
+```
+class MyTypeWrapper { ... };
+Set<MyTypeWrapper> A{MyTypeWrapper(...), MyTypeWrapper(...), ...};
+
+```
+
+- Set of pointers will not sort/store values properly, because comparing pointers will sort items by memory address and not by value. You have to create your own object to compare pointers.
+
+```
+template<class T>
+struct PointersCompare {
+  bool operator()(const T *a, const T *b) const {
+    return *a < *b;
+  }
+};
+
+int main(int argc, const char *argv[]) {
+  Set<int*, PointersCompare<int>> A{}; // an empty set
+
+  for (int i=10; i>=1; i--) {
+    A.insert(new int{i});
+  }
+
+  // A = {*1, *2, *3, ..., *10}
+  for (const auto& p : A) {
+    std::cout << *p << std::endl;
+  }
+  
+  // Output:
+  // 1
+  // 2
+  // 3
+  // ...
+  // 10
+  
+  // Release memory
+  for (auto& p : A) {
+    delete p;
+  }
+  
+  return 0;
+}
+```
+
