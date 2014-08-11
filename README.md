@@ -137,7 +137,7 @@ bool f3 = A != C; // f3 = true
 ```
 
 ### Inclusion
-`The set B is contained in the set A if all elements of B are present in A.` (any math teacher)
+`"The set B is contained in the set A if all elements of B are present in A."` (<i>any math teacher</i>)<br/>
 Set allows you to check for inclusion through the <strong>contains(Set, bool strict)</strong> method:
 
 ```
