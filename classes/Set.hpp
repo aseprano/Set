@@ -31,8 +31,20 @@ public:
 	Set() {};
 	
 	// Set with initializer list
-	Set(std::initializer_list<value_type> l) {
-		_set.insert(_set.begin(), l);
+	Set(const std::initializer_list<value_type>& l) {
+		_set.reserve(l.size());
+		
+		for (const auto& value : l) {
+			insert(value);
+		}
+	}
+	
+	Set(std::initializer_list<value_type>&& l) {
+		_set.reserve(l.size());
+		
+		for (auto& value : l) {
+			insert(std::move(value));
+		}
 	}
 	
 	// Copy constructor
@@ -117,7 +129,6 @@ public:
 		return !(*this == s);
 	};
 	
-	/*
 	bool operator<(const _SET& s) const noexcept {
 		if (size() != s.size()) {
 			return size() < s.size();
@@ -139,14 +150,19 @@ public:
 		
 		return false;
 	}
-	*/
 	
 	
 	// Insert new value
 	// unique = true => values must be unique (no duplicate values allowed)
 	_SET& insert(const value_type& value, bool unique = false) noexcept {
 		if (!unique || find(value) == _set.end()) {
-			_set.push_back(value);
+			auto it = begin();
+			
+			while (it != end() && *it < value) {
+				it++;
+			}
+			
+			_set.insert(it, value);
 		}
 		
 		return *this;
@@ -154,7 +170,13 @@ public:
 	
 	_SET& insert(value_type&& value, bool unique = false) noexcept {
 		if (!unique || find(value) == _set.end()) {
-			_set.push_back(std::move(value));
+			auto it = begin();
+			
+			while (it != end() && *it < value) {
+				it++;
+			}
+			
+			_set.insert(it, std::move(value));
 		}
 		
 		return *this;
