@@ -27,7 +27,7 @@ A += 9;              // A = {1,2,3,3,9,9}
 A.insert(10)         // A = {1,2,3,3,9,9,10}
 A.insert(100).insert(90); // A = {1,2,3,3,9,9,10,90,100}
 
-// Add elements to set only if it doesn't exist
+// Add an element to set only if it doesn't exist
 A.insert(9, true); // not inserted
 ```
 
