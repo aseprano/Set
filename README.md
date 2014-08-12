@@ -118,7 +118,7 @@ size_t n = A.count(4); // returns 0
 ```
 
 ### Cartesian product
-From <a href="http://en.wikipedia.org/wiki/Cartesian_product">Wikipiedia</a>, the Cartesian product A × B is the set of all ordered pairs (a, b) where a ∈ A and b ∈ B.
+From <a href="http://en.wikipedia.org/wiki/Cartesian_product">Wikipedia</a>, the Cartesian product A × B is the set of all ordered pairs (a, b) where a ∈ A and b ∈ B.
 Set allows you to make Cartesian Product of two Sets using the '*' operator, which returns a Set&lt;Set&lt;...&gt;&gt;:
 
 ```
@@ -129,13 +129,14 @@ auto P = A*B; // P is Set<Set<int>>; P = {{1,2},{1,3},{2,2},{2,3},{2,3},{3,3}}
 
 ### Size and cleanup of a Set
 You can know the size of a Set, that is the number of total elements in it. The size is greather-or-equal to 0.
-Because of there is the concept of "empty set" or "zero set", Set adds the <strong>empty()</strong> method, which just checks if the size is zero.
+Because of there is the concept of "empty set" or "zero set", Set adds the <strong>empty()</strong> method, which just checks if the size is zero:
 
 ```
 Set<int> A{1,1,2,2,3,4};
 size_t s = A.size(); // s = 6
-bool f = A.empty();  // f = false
-A.clear();           // Remove ALL items from A
+A.empty();           // False
+A.clear();           // Removes ALL items from A
+A.empty();           // True
 ```
 
 ### Comparing sets
