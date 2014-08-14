@@ -10,6 +10,7 @@
 #include <functional>
 #include <utility>
 #include <algorithm>
+#include <stdexcept>
 
 #ifndef _SET_HPP
 #define _SET_HPP
@@ -308,6 +309,10 @@ public:
 	}
 	
 	bool contains(const _SET& s, bool strict = false) const noexcept {
+		if (strict) {
+			return this->contains(s, false) && s.contains(*this, false);
+		}
+		
 		for (const auto& value : s) {
 			bool found{false};
 			
@@ -323,7 +328,8 @@ public:
 			}
 		}
 		
-		return strict ? (s.size() != size()) : true;
+		
+		return true;
 	}
 	
 	template<class InputIterator>
@@ -382,8 +388,60 @@ public:
 		return *this;
 	}
 	
+	Set<_SET> combinations(int n) const noexcept {
+		Set<_SET> ret;
+		
+		if (n > _set.size()) {
+			throw std::out_of_range("Value out of range for set combinations");
+		}
+		
+		std::vector<int> counters(n);
+		for (int i=0; i<n; i++) {
+			counters[i] = i;
+		}
+		
+		do {
+			_SET s;
+			
+			for (auto index : counters) {
+				s += _set[index];
+			}
+			
+			ret += s;
+		} while (this->_increase_counters(counters));
+		
+		return ret;
+	}
+	
+	
 private:
 	std::vector<value_type,allocator_type> _set;
+	
+	bool _increase_counters(std::vector<int>& c) const noexcept {
+		long int limit = _set.size()-1;
+		long int i = c.size()-1;
+		bool found{false};
+		
+		do {
+			if (++c[i] <= (limit - (c.size()-i-1))) {
+				found = true;
+			}
+			else {
+				if (--i < 0) {
+					return false;
+				}
+			}
+		} while (!found);
+		
+		i++;
+		
+		while (i < c.size()) {
+			c[i] = c[i-1]+1;
+			i++;
+		}
+		
+		return true;
+	}
 };
 
 #endif /* defined(_SET_HPP) */
