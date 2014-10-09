@@ -8,13 +8,12 @@ Code - now - is for C++11 only, but in future it should become c++98 compatible.
 Just include "Set.hpp" to your project and go on.
 
 ### Create new Sets
-```
+```cpp
 #include "Set.hpp"
 
 // Set of ints
 Set<int> A{1,2,3}, B{3,4,5}; // A = {1,2,3}, B = {3,4,5}
 Set<int> A1 = A;             // A1 = {1,2,3}
-
 ```
 
 ### Adding elements to Set
