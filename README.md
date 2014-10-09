@@ -19,7 +19,7 @@ Set<int> A1 = A;             // A1 = {1,2,3}
 ### Adding elements to Set
 Sets can contain repeated elements, so Set.hpp allows you to do so.
 
-```
+```cpp
 Set<int> A{1,2,3,3}; // A = {1,2,3,3}
 A.insert(9);         // A = {1,2,3,3,9}
 A += 9;              // A = {1,2,3,3,9,9}
@@ -33,7 +33,7 @@ A.insert(9, true); // not inserted
 ### Removing elements from set
 You can remove one or more elements from your Set using the remove() method. It allows you to remove elements by iterator, range or direct value.
 
-```
+```cpp
 Set<int> A{1,2,2,3,3,4};
 A.erase(A.begin()); // Removes first element, A = {2,2,3,3,4}
 A.erase(2, false)   // Remove one '2' element, A = {2,3,3,4}
@@ -44,7 +44,7 @@ A.erase(A.begin(), A.end()); // Removes all the elements, same as A.clear()
 
 Working with stl functions:
 
-```
+```cpp
 Set<int> B{1,2,2,3,4,4,5};
 
 // Removing all values between 2 and 4
@@ -58,7 +58,7 @@ B.erase(it, B.end());
 ### Union of sets
 Set can be joined each other using the '+' operator, without modifying the original ones. They can be joined on the fly or in sub-expressions, allowing you to join Set-to-Set and Set-to-value:
 
-```
+```cpp
 Set<int> A{1,2,3}, B{1,2};
 Set<int> C = A+B; // C={1,1,2,2,3}, A and B won't change
 Set<int> D = A+1; // D = {1,1,2,3}, A won't change
@@ -67,7 +67,7 @@ Set<int> E = (A+B)+((C+D)+4); // same as above
 
 You can also add an entire set, or just one value, to a Set using the '+=' operator. Doing this you will update the Set:
 
-```
+```cpp
 Set<int> A{1,2,3}, B{3,4,5};
 A += B; // A = {1,2,3,3,4,5}, B won't change
 A += 9; // A = {1,2,3,3,4,5,9}, 9 won't change
@@ -77,7 +77,7 @@ A += 9; // A = {1,2,3,3,4,5,9}, 9 won't change
 The relative complement of A in B, denoted as A \ B, is the set with all elements of B not present in A.
 You can obtain the relative complements using the '-' operator. It's possible to concatenate more complement as it is possible to make multiple joins. Again, original sets won't change:
 
-```
+```cpp
 Set<int> A{1,2,3}, B{1,1,2};
 Set<int> D = A-B; // D = {3}, A and B won't change
 Set<int> E = B-A; // E = {1}, A and B won't change
@@ -86,7 +86,7 @@ Set<int> D = A-B-3; // D = {}, A and B won't change
 
 It is possible to update a Set, removing one direct value or another Set, using the '-=' operator. It is another form of relative complement:
 
-```
+```cpp
 Set<int> A{1,2,3}, B{1,2};
 A -= B; // A = {3}
 A -= 3; // A = {}
@@ -94,7 +94,7 @@ A -= 3; // A = {}
 
 You can also mix union and complement forms:
 
-```
+```cpp
 Set<int> A{1,2,3};
 Set<int> B = A+4; // B = {1,2,3,4}
 Set<int> C = B+B+5-(A+A);
@@ -102,7 +102,7 @@ Set<int> C = B+B+5-(A+A);
 
 ### Find and counting elements
 Set use iterators to allows you (and stl functions as std::find) to iterate through elements. Also, it provide a find() method that returns an iterator to the first item, if an item with that value is found, or Set::end() otherwise.
-```
+```cpp
 Set<int> A{1,2,3,3};
 auto it = A.begin();  // iterator to '1'
 auto it = A.end();    // iterator to the past-the-end element of A (NOT to '3')
@@ -111,7 +111,7 @@ auto it = A.find(4);  // it == A.end()
 ```
 It is possible to count elements of a set with the same value:
 
-```
+```cpp
 size_t n = A.count(3); // returns 2
 size_t n = A.count(4); // returns 0
 ```
@@ -120,7 +120,7 @@ size_t n = A.count(4); // returns 0
 From <a href="http://en.wikipedia.org/wiki/Cartesian_product">Wikipedia</a>, the Cartesian product A × B is the set of all ordered pairs (a, b) where a ∈ A and b ∈ B.
 Set allows you to make Cartesian Product of two Sets using the '*' operator, which returns a Set&lt;Set&lt;...&gt;&gt;:
 
-```
+```cpp
 Set<int> A{1,2,3};
 Set<int> B{2,3};
 auto P = A*B; // P is Set<Set<int>>; P = {{1,2},{1,3},{2,2},{2,3},{2,3},{3,3}}
@@ -130,7 +130,7 @@ auto P = A*B; // P is Set<Set<int>>; P = {{1,2},{1,3},{2,2},{2,3},{2,3},{3,3}}
 You can know the size of a Set, that is the number of total elements in it. The size is greather-or-equal to 0.
 Because of there is the concept of "empty set" or "zero set", Set adds the <strong>empty()</strong> method, which just checks if the size is zero:
 
-```
+```cpp
 Set<int> A{1,1,2,2,3,4};
 size_t s = A.size(); // s = 6
 A.empty();           // False
@@ -142,7 +142,7 @@ A.empty();           // True
 Two sets are equals if they contains the same items, it is not important if they are repeated.
 As opposite, two sets are not equals if they does not contain the same items.
 
-```
+```cpp
 Set<int> A{1,2,3}, B = A+1, C{2,3};
 bool f1 = A == B; // f1 = true
 bool f2 = A == C; // f2 = false
@@ -153,7 +153,7 @@ bool f3 = A != C; // f3 = true
 `"The set B is contained in the set A if all elements of B are present in A."` (<i>any math teacher</i>)<br/>
 Set allows you to check for inclusion through the <strong>contains(Set, bool strict)</strong> method:
 
-```
+```cpp
 Set<int> A{1,2,3}, B{1,2}, C{1,1,2,3};
 bool f1 = A.contains(B, false); // Not a strict check, returns true
 bool f2 = A.contains(B);        // Same as above
@@ -164,7 +164,7 @@ bool f3 = A.contains(C, true);  // true, A contains C and C contains A
 ### Unique values
 You can need to take all single values from a Set (of any kind), discarding multiple values. It is possible, but it will remove items from your Set (it is not possible to remove unique values leaving the Set intact).
 
-```
+```cpp
 Set<int> A{1,2,1,3,4,3};
 A.unique();                  // A = {1,2,3,4}
 Set<int> B{3,4,5};
@@ -174,7 +174,7 @@ Set<int> C = (A+B).unique(); // C = {1,2,3,4,5}, A and B won't change
 ### Intersection
 Intersection is possible, but will use unique values from both the Sets:
 
-```
+```cpp
 Set<int> A{1,2,3}, B{2,3,4};
 Set<int> C = A.intersectionWith(B); // C = {2,3}
 
@@ -185,7 +185,7 @@ Set<int> C = A.intersectionWith(B); // C = {2,3}
 - You cannot have Set containing different types, they are for uniform.<br />
 So you cannot combine Set&lt;int&gt; with Set&lt;float&gt; or Set&lt;string&gt; or Set&lt;Set&lt;...&gt;&gt;, but you can write your own TypeWrapper to use your custom Set:
 
-```
+```cpp
 class MyTypeWrapper { ... };
 Set<MyTypeWrapper> A{MyTypeWrapper(...), MyTypeWrapper(...), ...};
 
@@ -193,7 +193,7 @@ Set<MyTypeWrapper> A{MyTypeWrapper(...), MyTypeWrapper(...), ...};
 
 - Set of pointers will not sort/store values properly, because comparing pointers will sort items by memory address and not by value. You will create your own object to compare pointers:
 
-```
+```cpp
 template<class T>
 struct PointersCompare {
   bool operator()(const T *a, const T *b) const {
